@@ -1,6 +1,7 @@
 #include <stdio.h>
 // I will be using string.h library to concatenate strings.
 #include <string.h>
+#include <math.h>
 
 /*
     Takes in the decimal form of the number (decimal_num), the number of 
@@ -12,21 +13,22 @@
 */
 const char * decimalToBinary(int decimal_num, int c, char str[]) {
     int result;
-    int i = 0;
+    //printf("----- decimal_num = %d -----\n", decimal_num);
     for (c-=1; c >= 0; c--)
     {
         result = decimal_num >> c;
+        //printf("The value of result is: %i\n", result);
         if (result & 1) {
+            //printf("Concatenating 1\n");
             strcat(str, "1");
         }
         else {
+            //printf("Concatenating 0\n");
             strcat(str, "0");
         }
-        i++;
     }
-    strcat(str, "\0");
+    //printf("Returning str = %s", str);
     return str;
-
 }
 
 int main () {
@@ -34,8 +36,8 @@ int main () {
     // Month/Day Hour:Min:Sec = mo1mo2/d1d2 h1h2:mi1mi2:s1s2
     int mo1, mo2, d1, d2, h1, h2, mi1, mi2, s1, s2;
     int intArr[10];
-    char mo1b[2], mo2b[5], d1b[3], d2b[5], h1b[3], h2b[5], mi1b[4], mi2b[5], s1b[4], s2b[5];
-    char combined[32];
+    char mo1b[1], mo2b[4], d1b[2], d2b[4], h1b[2], h2b[4], mi1b[3], mi2b[4], s1b[3], s2b[4];
+    char combined[32] = "0";
     /* 
         TO DO:
         1. Convert each mo1,...,s2 to binary in STRING, store them in mo1b,...,s2b.
@@ -49,8 +51,8 @@ int main () {
     for (i=0; i<numLines; i++) {
         scanf("%1d%1d/%1d%1d", &mo1, &mo2, &d1, &d2);
         scanf("%1d%1d:%1d%1d:%1d%1d", &h1, &h2, &mi1, &mi2, &s1, &s2);
-        printf("mo1 = %d / mo2 = %d / d1 = %d / d2 = %d\n", mo1, mo2, d1, d2);
-        printf("h1 = %d / h2 = %d / mi1 = %d / mi2 = %d / s1 = %d / s2 = %d\n", h1, h2, mi1, mi2, s1, s2);
+        //printf("mo1 = %d / mo2 = %d / d1 = %d / d2 = %d\n", mo1, mo2, d1, d2);
+        //printf("h1 = %d / h2 = %d / mi1 = %d / mi2 = %d / s1 = %d / s2 = %d\n", h1, h2, mi1, mi2, s1, s2);
         
         intArr[0] = mo1;
         intArr[1] = mo2;
@@ -62,55 +64,58 @@ int main () {
         intArr[7] = mi2;
         intArr[8] = s1;
         intArr[9] = s2;
-        // Have the mo1b(inary),...,s2b char arrays store the binary representations of 
-        // the decimal numbers of mo1,...,s2, in string format. 
-        decimalToBinary(intArr[0], 1, mo1b);
-        decimalToBinary(intArr[1], 4, mo2b);
-        decimalToBinary(intArr[2], 2, d1b);
-        decimalToBinary(intArr[3], 4, d2b);
-        decimalToBinary(intArr[4], 2, h1b);
-        decimalToBinary(intArr[5], 4, h2b);
-        decimalToBinary(intArr[6], 3, mi1b);
-        decimalToBinary(intArr[7], 4, mi2b);
-        decimalToBinary(intArr[8], 3, s1b);
-        decimalToBinary(intArr[9], 4, s2b);
 
-        strcpy(combined, mo1b);
-        printf("combined,mo1b = %s\n", combined);
-        strcat(combined, mo2b);
-        printf("combined,mo2b = %s\n", combined);
-        strcat(combined, d1b);
-        printf("combined,d1b = %s\n", combined);
-        strcat(combined, d2b);
-        printf("combined,d2b = %s\n", combined);
-        strcat(combined, h1b);
-        printf("combined,h1b = %s\n", combined);
-        strcat(combined, h2b);
-        printf("combined,h2b = %s\n", combined);
-        strcat(combined, mi1b);
-        printf("combined,mi1b = %s\n", combined);
-        strcat(combined, mi2b);
-        printf("combined,mi2b = %s\n", combined);
-        strcat(combined, s1b);
-        printf("combined,s1b = %s\n", combined);
-        strcat(combined, s2b);
-        printf("combined,s2b = %s\n", combined);
+        // (Re)Initialize the char arrays containing binary values for next line(s).
+        memset(mo1b, 0, 1);
+        memset(mo2b, 0, 4);
+        memset(d1b, 0, 2);
+        memset(d2b, 0, 4);
+        memset(h1b, 0, 2);
+        memset(h2b, 0, 4);
+        memset(mi1b, 0, 3);
+        memset(mi2b, 0, 4);
+        memset(s1b, 0, 3);
+        memset(s2b, 0, 4);
+        memset(combined, 0, 32);
 
+        // I found the code for "concatenating" integers from StackOverflow:
+        // url: https://stackoverflow.com/questions/12700497/how-to-concatenate-two-integers-in-c
+        int month = (mo1 * pow(10, (int)log10(mo2)+1)) + mo2;
+        int day = (d1 * pow(10, (int)log10(d2)+1)) + d2;
+        int hour = (h1 * pow(10, (int)log10(h2)+1)) + h2;
+        int minute = (mi1 * pow(10, (int)log10(mi2)+1)) + mi2;
+        int second = (s1 * pow(10, (int)log10(s2)+1)) + s2;
+
+        // Check if any of the month, day, hour, minute or second is an invalid number. 
+        // If there is invalidity, change 'combined' string to "INVALID".
+        if(month<1||month>12||day<1||day>31||hour<0||hour>23||minute<0||minute>59||second<0||second>59) {
+            memset(combined, 0, 5);
+            strcpy(combined, "INVALID");
+            printf("Combined String = %s\n", combined);
+        }
+        // If there is no invalidity with the input, proceed to convert each and every digit to 
+        // its binary representation in char array. Then, concatenate all of them beginning with 
+        // month all the way to second, storing them in one char array.
+        else {
+            strcpy(combined, decimalToBinary(intArr[0], 1, mo1b));
+            strcat(combined, decimalToBinary(intArr[1], 4, mo2b));
+            strcat(combined, decimalToBinary(intArr[2], 2, d1b));
+            strcat(combined, decimalToBinary(intArr[3], 4, d2b));
+            strcat(combined, decimalToBinary(intArr[4], 2, h1b));
+            strcat(combined, decimalToBinary(intArr[5], 4, h2b));
+            strcat(combined, decimalToBinary(intArr[6], 3, mi1b));
+            strcat(combined, decimalToBinary(intArr[7], 4, mi2b));
+            strcat(combined, decimalToBinary(intArr[8], 3, s1b));
+            strcat(combined, decimalToBinary(intArr[9], 4, s2b));
+
+            printf("Combined String = %s\n", combined);
+        }
+
+        // Convert the resulting "combined" char array which contains the binary 
+        // representation of all the input digits, into decimal form, then print it out.
         
 
-        // Re-Initialize the char arrays containing binary values for next line(s).
-        memset(mo1b, 0, 2);
-        memset(mo2b, 0, 5);
-        memset(d1b, 0, 3);
-        memset(d2b, 0, 5);
-        memset(h1b, 0, 3);
-        memset(h2b, 0, 5);
-        memset(mi1b, 0, 4);
-        memset(mi2b, 0, 5);
-        memset(s1b, 0, 4);
-        memset(s2b, 0, 5);
-        memset(combined, 0, 32);
-        /*
+       /*
         Convert each mo1, mo2, ..., s1, s2 to binary number
         String str = "";
         strcat(str, mo1.binary), strcat(str, mo2.binary), ... , strcat(str, s2.binary);
