@@ -32,12 +32,12 @@ const char * decimalToBinary(int decimal_num, int c, char str[]) {
 }
 
 int main () {
-    int i, numLines;
+    int i, numLines, base, j, sum;
     // Month/Day Hour:Min:Sec = mo1mo2/d1d2 h1h2:mi1mi2:s1s2
     int mo1, mo2, d1, d2, h1, h2, mi1, mi2, s1, s2;
     int intArr[10];
     char mo1b[1], mo2b[4], d1b[2], d2b[4], h1b[2], h2b[4], mi1b[3], mi2b[4], s1b[3], s2b[4];
-    char combined[32] = "0";
+    char combined[33];
     /* 
         TO DO:
         1. Convert each mo1,...,s2 to binary in STRING, store them in mo1b,...,s2b.
@@ -76,7 +76,9 @@ int main () {
         memset(mi2b, 0, 4);
         memset(s1b, 0, 3);
         memset(s2b, 0, 4);
-        memset(combined, 0, 32);
+        memset(combined, 0, 33);
+        // bit 31 is never used and is always set equal to zero, so:
+        strcpy(combined, "0");
 
         // I found the code for "concatenating" integers from StackOverflow:
         // url: https://stackoverflow.com/questions/12700497/how-to-concatenate-two-integers-in-c
@@ -91,13 +93,13 @@ int main () {
         if(month<1||month>12||day<1||day>31||hour<0||hour>23||minute<0||minute>59||second<0||second>59) {
             memset(combined, 0, 5);
             strcpy(combined, "INVALID");
-            printf("Combined String = %s\n", combined);
+            printf("%s\n", combined);
         }
         // If there is no invalidity with the input, proceed to convert each and every digit to 
         // its binary representation in char array. Then, concatenate all of them beginning with 
         // month all the way to second, storing them in one char array.
         else {
-            strcpy(combined, decimalToBinary(intArr[0], 1, mo1b));
+            strcat(combined, decimalToBinary(intArr[0], 1, mo1b));
             strcat(combined, decimalToBinary(intArr[1], 4, mo2b));
             strcat(combined, decimalToBinary(intArr[2], 2, d1b));
             strcat(combined, decimalToBinary(intArr[3], 4, d2b));
@@ -107,21 +109,21 @@ int main () {
             strcat(combined, decimalToBinary(intArr[7], 4, mi2b));
             strcat(combined, decimalToBinary(intArr[8], 3, s1b));
             strcat(combined, decimalToBinary(intArr[9], 4, s2b));
+            //printf("Combined String = %s\n", combined);
 
-            printf("Combined String = %s\n", combined);
+            // Convert the resulting "combined" char array which contains the binary 
+            // representation of all the input digits, into decimal form, then print it out.
+            base = 1073741824; // i.e. 2^30
+            sum = 0;
+            for (j = 1; j<32; j++) {
+                // Compare by ASCII value: "1" in ASCII is 49, so compare it with 49.
+                if (combined[j] == 49) {
+                    sum += base;
+                }
+                base = base / 2;
+            }
+            printf("%d\n", sum);
         }
-
-        // Convert the resulting "combined" char array which contains the binary 
-        // representation of all the input digits, into decimal form, then print it out.
-        
-
-       /*
-        Convert each mo1, mo2, ..., s1, s2 to binary number
-        String str = "";
-        strcat(str, mo1.binary), strcat(str, mo2.binary), ... , strcat(str, s2.binary);
-        str == "1001010101001010101010101"
-        Convert str to decimal value: https://www.geeksforgeeks.org/program-binary-decimal-conversion/
-        */
     }
     return 0;
 }
