@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 /*
-    Jin Sim / js7771
+    Author: Jin Sim (js7771)
     Takes in number of inputs and start a for loop for that number of inputs. 
     For each iteration, take in the values for red, green, blue and store these 
     in their corresponding variables, red, green, blue. 

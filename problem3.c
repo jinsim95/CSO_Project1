@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 /*
-    Jin Sim / js7771
+    Author: Jin Sim (js7771)
     Takes in one number at a time, and checks to see if the number is equal to zero.
     If it is zero, the main returns immediately as it should not be processed and as 
     it marks the end of the series of input. For each of the 31 bits of 1 (0b00...01), 

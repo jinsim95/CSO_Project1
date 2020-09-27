@@ -1,9 +1,14 @@
 #include <stdio.h>
 // I will be using string.h library to concatenate strings.
 #include <string.h>
+// I will be using math.h library to use 'pow' function, which will be 
+// used to "concatenate" two integers together.
+// NOTE: The restrictions on README.md specified not to use math.h for 
+// Problem 3 only, and so I have used this library for Problem 1, but not 3.
 #include <math.h>
 
 /*
+    Author: Jin Sim (js7771)
     Takes in the decimal form of the number (decimal_num), the number of 
     bits the binary version of it will take up (c), and an initialized 
     character array (string) that will contain binary representation of 
@@ -31,6 +36,9 @@ const char * decimalToBinary(int decimal_num, int c, char str[]) {
     return str;
 }
 
+// Author: Jin Sim (js7771)
+// Takes in date/time and converts it to one numeric value for storing, then prints them out.
+// If the given date/time is invalid, prints out "INVALID" instead.
 int main () {
     int i, numLines, base, j, sum;
     // Month/Day Hour:Min:Sec = mo1mo2/d1d2 h1h2:mi1mi2:s1s2
